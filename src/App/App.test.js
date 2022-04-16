@@ -1,8 +1,9 @@
 import App from './App';
-import {mount} from 'enzyme';
+import { screen, render } from '@testing-library/react';
 
 describe('Should render App properly', () => {
-    it ('render App', () => {
-        const rendered = mount(<App />);
+    it ('render App', async () => {
+        render(<App />);
+        expect(await screen.findByText('Hello ae')).not.toBeVisible();
     });
 })

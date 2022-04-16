@@ -1,6 +1,6 @@
 const App = () => {
     return (
-        <div>
+        <div data-cmp='app'>
             Hello ae
         </div> 
     );
