@@ -7,9 +7,9 @@ pipeline {
                 echo 'Env setup hehe'
             }
         }
-        stage('Run test') {
+        stage('Print env') {
             steps {
-                echo 'Hehe'
+                sh 'printenv | sort'
             }
         }
     }
