@@ -12,5 +12,10 @@ pipeline {
                 echo 'Hehe'
             }
         }
+        stage('Print env') {
+            steps {
+                sh 'printenv'
+            }
+        }
     }
 }
