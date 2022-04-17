@@ -7,7 +7,7 @@ pipeline {
                 echo 'Env setup hehe'
             }
         }
-        stage('Setup env') {
+        stage('Setup env 2') {
             steps {
                 echo 'Env setup hehe'
             }
