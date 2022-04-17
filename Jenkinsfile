@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Setup env') {
             steps {
-                sh 'npm install'
+                echo 'Env setup'
             }
         }
         stage('Run test') {
