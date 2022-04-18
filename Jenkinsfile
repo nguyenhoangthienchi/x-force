@@ -13,7 +13,7 @@ pipeline {
                     aws s3api create-bucket --bucket "\$BUILD_ID"
                 """
                 sh """
-                    aws s3api put-public-access-block --bucket "\${BUILD_ID}" --public-access-block-configuration "\$(< .aws/s3/publicAccessBlock.json)"
+                    aws s3api put-public-access-block --bucket "\$BUILD_ID" --public-access-block-configuration "\$(< .aws/s3/publicAccessBlock.json)"
                 """
                 sh """
                     aws s3api put-bucket-policy --bucket x-force-10 --policy "\$(sed "s/###BUILD_ID###/\$BUILD_ID/g" <<< \$(< .aws/s3/permissionPolicy.json))"
