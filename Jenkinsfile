@@ -5,9 +5,7 @@ pipeline {
         stage('Setup env') {
             steps {
                 echo 'Env setup hehe'
-                sh '''
-                    BUILD_ID="pr-x4ce-" + env.CHANGE_ID
-                '''
+                sh 'BUILD_ID=pr-x4ce-' + env.CHANGE_ID
                 sh 'echo $BUILD_ID'
                 sh """
                     aws s3api create-bucket --bucket "${BUILD_ID}"
