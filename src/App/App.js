@@ -1,7 +1,7 @@
 const App = () => {
     return (
         <div data-cmp='app'>
-            Hello X-Force
+            Hello X-Force new text
         </div> 
     );
 }
