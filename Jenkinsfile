@@ -35,31 +35,34 @@ pipeline {
                 }
             }
         }
-        stage("Deploy to S3 (PR)") {
-            when {
-                allOf {
-                    expression { env.CHANGE_ID != null }
-                    expression { env.CHANGE_BRANCH != null }
-                }
-            }
-            environment {
-                BUILD_PREFIX_NAME = 'pr-x4ce-' + "${CHANGE_ID}"
-            }
-            steps {
-                sh 'aws s3 cp build s3://' + "${BUILD_PREFIX_NAME}" + ' --recursive'
-            }
-        }
         stage("Deploy") {
-            when {
-                expression { env.BRANCH_NAME == 'master' }
-            }
             parallel {
+                stage("Deploy to S3 (PR)") {
+                    when {
+                        allOf {
+                            expression { env.CHANGE_ID != null }
+                            expression { env.CHANGE_BRANCH != null }
+                        }
+                    }
+                    environment {
+                        BUILD_PREFIX_NAME = 'pr-x4ce-' + "${CHANGE_ID}"
+                    }
+                    steps {
+                        sh 'aws s3 cp build s3://' + "${BUILD_PREFIX_NAME}" + ' --recursive'
+                    }
+                }
                 stage("Production") {
+                    when {
+                        expression { env.BRANCH_NAME == 'master' }
+                    }
                     steps {
                         sh 'aws s3 cp build s3://x4ce-master --recursive'
                     }
                 }
                 stage("Test") {
+                    when {
+                        expression { env.BRANCH_NAME == 'master' }
+                    }
                     steps {
                         sh 'aws s3 cp build s3://x4ce-test --recursive'
                     }
