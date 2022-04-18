@@ -1,47 +1,35 @@
 pipeline {
     agent any
-
+    
     stages {
-        stage('Setup env') {
-            steps {
-                def BUILD_ID = 'pr-x4ce-' + env.CHANGE_ID
-                sh "echo ${BUILD_ID}"
-                sh """
-                    aws s3api create-bucket --bucket "${BUILD_ID}"
-                """
-                sh """
-                    aws s3api put-public-access-block --bucket "${BUILD_ID}" --public-access-block-configuration "\$(< .aws/s3/publicAccessBlock.json)"
-                """
-                sh """
-                    aws s3api put-bucket-policy --bucket x-force-10 --policy "\$(sed "s/###BUILD_ID###/${BUILD_ID}/g" <<< \$(< .aws/s3/permissionPolicy.json))"
-                """
-                sh """
-                    aws s3api put-bucket-website --bucket x-force-10 --website-configuration file://.aws/s3/websiteConfig.json
-                """ 
+        stage('Setup environment') {
+            environment {
+                BUILD_PREFIX_NAME = 'pr-x4ce-' + "${BUILD_NUMBER}"
             }
-        }
-        stage('Setup env 2') {
             parallel {
-                stage ('Test on Windows') {
+                stage('Build and unit test') {
                     steps {
-                        echo 'Tested on windows'
+                        sh 'npm install'
+                        sh 'npm run test'
+                        sh 'npm run build'
                     }
                 }
-                stage ('Test on Linux') {
+                stage('Prepare S3 bucket') {
                     steps {
-                        echo 'Tested on Linux'
-                    }
-                }
-                stage ('Test on MacOS') {
-                    steps {
-                        echo 'Tested on MacOS'
+                        sh 'aws s3api create-bucket --bucket "${BUILD_PREFIX_NAME}" --region ap-southeast-1 --create-bucket-configuration LocationConstraint=ap-southeast-1'
+                        sh 'aws s3api put-public-access-block --bucket "${BUILD_PREFIX_NAME}" --public-access-block-configuration \'{"BlockPublicAcls": false,"IgnorePublicAcls": false,"BlockPublicPolicy": false,"RestrictPublicBuckets": false}\''
+                        sh 'aws s3api put-bucket-policy --bucket "${BUILD_PREFIX_NAME}" --policy \'{"Version": "2012-10-17","Statement": [{"Sid": "PublicReadGetObject","Effect": "Allow","Principal": "*","Action": "s3:GetObject","Resource": "arn:aws:s3:::' + "${BUILD_PREFIX_NAME}" + '/*"}]}\''
+                        sh 'aws s3api put-bucket-website --bucket "${BUILD_PREFIX_NAME}" --website-configuration \'{"IndexDocument": {"Suffix": "index.html"}}\''
                     }
                 }
             }
         }
-        stage('Print env') {
+        stage("Deploy to S3") {
+            environment {
+                BUILD_PREFIX_NAME = 'pr-x4ce-' + "${BUILD_NUMBER}"
+            }
             steps {
-                sh 'printenv | sort'
+                sh 'aws s3 cp build s3://' + "${BUILD_PREFIX_NAME}" + '--recursive'
             }
         }
     }
