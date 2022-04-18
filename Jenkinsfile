@@ -25,6 +25,7 @@ pipeline {
                         sh 'aws s3api put-bucket-website --bucket "${BUILD_PREFIX_NAME}" --website-configuration \'{"IndexDocument": {"Suffix": "index.html"}}\''
                     } finally {
                         echo 'Finish prepare'
+                        currentBuild.result = "SUCCESS"
                     }
                 }
             }
