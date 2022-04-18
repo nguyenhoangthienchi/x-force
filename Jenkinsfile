@@ -16,7 +16,12 @@ pipeline {
                 }
                 stage ('Test on Linux') {
                     steps {
-                        echo 'Tested on Linux s'
+                        echo 'Tested on Linux '
+                    }
+                }
+                stage ('Test on MacOS') {
+                    steps {
+                        echo 'Tested on MacOS'
                     }
                 }
             }
