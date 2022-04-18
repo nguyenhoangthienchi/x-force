@@ -29,6 +29,7 @@ pipeline {
         stage('Print env') {
             steps {
                 sh 'printenv | sort'
+                echo 'Xin chao ban'
             }
         }
     }
