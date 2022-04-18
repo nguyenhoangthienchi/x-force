@@ -28,7 +28,7 @@ pipeline {
                 BUILD_PREFIX_NAME = 'pr-x4ce-' + "${BUILD_NUMBER}"
             }
             steps {
-                sh 'aws s3 cp build s3://' + "${BUILD_PREFIX_NAME}" + '--recursive'
+                sh 'aws s3 cp build s3://' + "${BUILD_PREFIX_NAME}" + ' --recursive'
             }
         }
     }
