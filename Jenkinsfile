@@ -35,9 +35,9 @@ pipeline {
                 }
             }
         }
-        stage("Deploy") {
+        stage("Deploy to S3") {
             parallel {
-                stage("Deploy to S3 (PR)") {
+                stage("Pull request") {
                     when {
                         allOf {
                             expression { env.CHANGE_ID != null }
