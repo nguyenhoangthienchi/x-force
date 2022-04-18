@@ -16,7 +16,7 @@ pipeline {
                 }
                 stage ('Test on Linux') {
                     steps {
-                        echo 'Tested on Linux '
+                        echo 'Tested on Linux'
                     }
                 }
                 stage ('Test on MacOS') {
